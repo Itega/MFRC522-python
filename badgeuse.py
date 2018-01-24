@@ -11,7 +11,7 @@ import time
 
 continue_reading = True
 
-cnx = mysql.connector.connect(user='test', password='root',
+cnx = mysql.connector.connect(user='root', password='root',
                               host='127.0.0.1',
                               database='presence')
 
@@ -35,7 +35,7 @@ GPIO.setup(33, GPIO.OUT)
 GPIO.setup(31, GPIO.OUT)
 
 def print_screen(string):
-    call(['./lcd_write', string])
+    call(['/home/pi/MFRC522-python/lcd_write', string])
 
 
 def lookup(uid):
