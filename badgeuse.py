@@ -11,9 +11,9 @@ import time
 
 continue_reading = True
 
-cnx = mysql.connector.connect(user='test', password='root',
-                              host='127.0.0.1',
-                              database='presence')
+cnx = mysql.connector.connect(user='root', password='root',
+                              host='localhost',
+                              database='badgeuse')
 
 
 # Capture SIGINT for cleanup when the script is aborted
@@ -35,7 +35,7 @@ GPIO.setup(33, GPIO.OUT)
 GPIO.setup(31, GPIO.OUT)
 
 def print_screen(string):
-    call(['./ttest', string])
+    call(['/home/pi/MFRC522-python/lcd_write', string])
 
 
 def lookup(uid):
@@ -45,7 +45,8 @@ def lookup(uid):
         surname = ''
         answer = cursor.callproc('uid_lookup', [uid, name, surname])
     finally:
-        cursor.close()
+        if 'cursor' in locals():
+            cursor.close()
     if answer[1] is not None and answer[2] is not None:
         return answer[1] + "\n" + answer[2]
     return False
@@ -57,7 +58,8 @@ def insert(uid, salle):
         cursor.callproc('insert_presence', [uid, salle, isMorning()])
     finally:
         cnx.commit()
-        cursor.close()
+        if 'cursor' in locals():
+            cursor.close()
 
 
 def isMorning():
@@ -89,10 +91,10 @@ while continue_reading:
         if result:
             insert(complete_uid, 'E121')
             print_screen(result)
-            GPIO.output(33, GPIO.HIGH)
+            GPIO.output(31, GPIO.HIGH)
         else:
             print_screen("Veuillez\nReessayer")
-            GPIO.output(31, GPIO.HIGH)
+            GPIO.output(33, GPIO.HIGH)
         time.sleep(1)
         GPIO.output(33, GPIO.LOW)
         GPIO.output(31, GPIO.LOW)
