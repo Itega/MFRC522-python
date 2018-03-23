@@ -11,7 +11,7 @@ import time
 
 continue_reading = True
 
-cnx = mysql.connector.connect(user='root', password='root',
+cnx = mysql.connector.connect(user='test', password='root',
                               host='127.0.0.1',
                               database='presence')
 
@@ -35,7 +35,7 @@ GPIO.setup(33, GPIO.OUT)
 GPIO.setup(31, GPIO.OUT)
 
 def print_screen(string):
-    call(['/home/pi/MFRC522-python/lcd_write', string])
+    call(['./ttest', string])
 
 
 def lookup(uid):
@@ -54,7 +54,7 @@ def lookup(uid):
 def insert(uid, salle):
     try:
         cursor = cnx.cursor()
-        cursor.callproc('insert_uid', [uid, salle, isMorning()])
+        cursor.callproc('insert_presence', [uid, salle, isMorning()])
     finally:
         cnx.commit()
         cursor.close()
@@ -89,10 +89,10 @@ while continue_reading:
         if result:
             insert(complete_uid, 'E121')
             print_screen(result)
-            GPIO.output(31, GPIO.HIGH)
+            GPIO.output(33, GPIO.HIGH)
         else:
             print_screen("Veuillez\nReessayer")
-            GPIO.output(33, GPIO.HIGH)
+            GPIO.output(31, GPIO.HIGH)
         time.sleep(1)
         GPIO.output(33, GPIO.LOW)
         GPIO.output(31, GPIO.LOW)
